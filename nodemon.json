@@ -1,0 +1,16 @@
+{
+    "watch": [
+        "*.go",
+        "**/*.go"
+    ],
+    "ignore": [
+        ".git",
+        "node_modules/**/node_modules"
+    ],
+    "exec": "go run main.go",
+    "ext": "go",
+    "events": {
+        "restart": "clear"
+    },
+    "delay": "1500"
+}
