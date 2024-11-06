@@ -68,16 +68,15 @@ func addBook(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
 	}
 
-	if book.ID == 0 || book.Title == "" || book.Author == "" {
-		return c.Status(fiber.StatusBadRequest).SendString("Missing required fields")
-	}
-
 	for _, existBook := range books {
 		if existBook.ID == book.ID {
-			return c.Status(fiber.StatusBadRequest).SendString("Book id is already exists")
+			return c.Status(fiber.StatusBadRequest).SendString("This book id is already exists")
 		}
 	}
 
 	books = append(books, *book)
-	return nil
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"msg":  "Book added successfully",
+		"data": book,
+	})
 }
