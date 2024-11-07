@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2"
+
+	"github.com/gofiber/template/html/v2"
 )
 
 type Books struct {
@@ -17,7 +19,12 @@ func main() {
 	// append book
 	books = append(books, Books{ID: 1, Title: "AjarnDaeng Guitar", Author: "AjarnDaeng"})
 	books = append(books, Books{ID: 2, Title: "Dhama Chatri", Author: "Ajarn-Mai-Rom"})
-	app := fiber.New()
+
+	// config view
+	engine := html.New("./views", ".html")
+	app := fiber.New(fiber.Config{
+		Views: engine,
+	})
 
 	// all rountes
 	app.Get("/ping", greetUser)
@@ -26,6 +33,8 @@ func main() {
 	app.Post("/books", addBook)
 	app.Patch("/books", updateBook)
 	app.Delete("books", deleteBook)
+	app.Post("/upload", uploadFile)
+	app.Get("/test-html", testHtml)
 
 	// running server on port
 	app.Listen(":8080")

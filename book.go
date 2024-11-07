@@ -85,3 +85,20 @@ func deleteBook(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"msg": "Book is not found"})
 }
+
+func uploadFile(c *fiber.Ctx) error {
+	file, err := c.FormFile("image")
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+	}
+	if err := c.SaveFile(file, "./upload/"+file.Filename); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"msg": "Upload image successfully"})
+}
+
+func testHtml(c *fiber.Ctx) error {
+	return c.Render("index", fiber.Map{
+		"Title": "Hello, World!",
+	})
+}

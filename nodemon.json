@@ -7,7 +7,7 @@
         ".git",
         "node_modules/**/node_modules"
     ],
-    "exec": "go run main.go",
+    "exec": "go run .",
     "ext": "go",
     "events": {
         "restart": "clear"
