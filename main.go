@@ -1,9 +1,15 @@
 package main
 
 import (
+	"log"
+
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/gofiber/template/html/v2"
+
+	"github.com/joho/godotenv"
+
+	"github.com/aujito/managebook/middlewares"
 )
 
 type Books struct {
@@ -16,6 +22,11 @@ var books []Books
 
 func main() {
 
+	// Env
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	// append book
 	books = append(books, Books{ID: 1, Title: "AjarnDaeng Guitar", Author: "AjarnDaeng"})
 	books = append(books, Books{ID: 2, Title: "Dhama Chatri", Author: "Ajarn-Mai-Rom"})
@@ -26,7 +37,11 @@ func main() {
 		Views: engine,
 	})
 
+	// use middlewares
+	app.Use(middlewares.CheckMiddleware)
+
 	// all rountes
+	app.Post("/login", userLogin)
 	app.Get("/ping", greetUser)
 	app.Get("/books", getBooks)
 	app.Get("/books/:id", getOneBook)
@@ -35,6 +50,7 @@ func main() {
 	app.Delete("books", deleteBook)
 	app.Post("/upload", uploadFile)
 	app.Get("/test-html", testHtml)
+	app.Get("/config", getEnv)
 
 	// running server on port
 	app.Listen(":8080")

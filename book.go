@@ -1,10 +1,25 @@
 package main
 
 import (
+	"fmt"
+	"os"
 	"strconv"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
+
+	"github.com/golang-jwt/jwt/v5"
 )
+
+type User struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+var memberUser = User{
+	Email:    "example@example.com",
+	Password: "password1234",
+}
 
 func greetUser(c *fiber.Ctx) error {
 	return c.SendString("Pong")
@@ -100,5 +115,42 @@ func uploadFile(c *fiber.Ctx) error {
 func testHtml(c *fiber.Ctx) error {
 	return c.Render("index", fiber.Map{
 		"Title": "Hello, World!",
+	})
+}
+
+func getEnv(c *fiber.Ctx) error {
+	return c.JSON(fiber.Map{
+		"SECRET_KEY": os.Getenv("SECRET_KEY"),
+	})
+}
+
+func userLogin(c *fiber.Ctx) error {
+	user := new(User)
+	if err := c.BodyParser(user); err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+	}
+	if user.Email == "" || user.Password == "" {
+		return c.Status(fiber.StatusBadRequest).SendString("Missing Email or Password")
+	}
+	if user.Email != memberUser.Email || user.Password != memberUser.Password {
+		return c.Status(fiber.StatusBadRequest).SendString("Email or Password is invalided please check again")
+	}
+	claims := jwt.MapClaims{
+		"email":    user.Email,
+		"password": user.Password,
+		"exp":      time.Now().Add(time.Hour * 72).Unix(),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	t, err := token.SignedString([]byte(os.Getenv("JWT_SECRET_KEY")))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	fmt.Print(os.Getenv("JWT_SECRET_KEY"))
+
+	return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
+		"msg":   "Login successfully",
+		"token": t,
 	})
 }
