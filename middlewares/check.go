@@ -12,3 +12,7 @@ func CheckMiddleware(c *fiber.Ctx) error {
 	fmt.Printf("URL = %s, Method = %s, Time = %s\n", c.OriginalURL(), c.Method(), start)
 	return c.Next()
 }
+
+func isLogin(c *fiber.Ctx) error {
+	return nil
+}
