@@ -21,17 +21,12 @@ func main() {
 	books = append(books, Books{ID: 2, Title: "Dhama Chatri", Author: "Ajarn-Mai-Rom"})
 	app := fiber.New()
 
-	// greet user
+	// all rountes
 	app.Get("/ping", greetUser)
-
-	// get books data
 	app.Get("/books", getBooks)
-
-	// get one book by id
 	app.Get("/books/:id", getOneBook)
-
-	// Add book
 	app.Post("/books", addBook)
+	app.Patch("/books", updateBook)
 
 	// running server on port
 	app.Listen(":8080")
@@ -39,7 +34,6 @@ func main() {
 
 func greetUser(c *fiber.Ctx) error {
 	return c.SendString("Pong")
-
 }
 
 func getBooks(c *fiber.Ctx) error {
@@ -79,4 +73,14 @@ func addBook(c *fiber.Ctx) error {
 		"msg":  "Book added successfully",
 		"data": book,
 	})
+}
+
+func updateBook(c *fiber.Ctx) error {
+	bookUpdate := new(Books)
+	err := c.BodyParser(bookUpdate)
+	print(err)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString("eiei")
+	}
+	return nil
 }
