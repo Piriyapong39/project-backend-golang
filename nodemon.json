@@ -12,5 +12,5 @@
     "events": {
         "restart": "clear"
     },
-    "delay": "1500"
+    "delay": "500"
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 
@@ -10,6 +11,8 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/aujito/managebook/middlewares"
+
+	jwtware "github.com/gofiber/contrib/jwt"
 )
 
 type Books struct {
@@ -27,6 +30,8 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+	JWT_TOKEN := os.Getenv("JWT_SECRET_KEY")
+
 	// append book
 	books = append(books, Books{ID: 1, Title: "AjarnDaeng Guitar", Author: "AjarnDaeng"})
 	books = append(books, Books{ID: 2, Title: "Dhama Chatri", Author: "Ajarn-Mai-Rom"})
@@ -42,6 +47,11 @@ func main() {
 
 	// all rountes
 	app.Post("/login", userLogin)
+
+	app.Use(jwtware.New(jwtware.Config{
+		SigningKey: jwtware.SigningKey{Key: []byte(JWT_TOKEN)},
+	}))
+
 	app.Get("/ping", greetUser)
 	app.Get("/books", getBooks)
 	app.Get("/books/:id", getOneBook)
@@ -52,6 +62,6 @@ func main() {
 	app.Get("/test-html", testHtml)
 	app.Get("/config", getEnv)
 
-	// running server on port
+	// running server on ports
 	app.Listen(":8080")
 }

@@ -125,6 +125,8 @@ func getEnv(c *fiber.Ctx) error {
 }
 
 func userLogin(c *fiber.Ctx) error {
+	JWT_TOKEN := os.Getenv("JWT_SECRET_KEY")
+	fmt.Print(JWT_TOKEN)
 	user := new(User)
 	if err := c.BodyParser(user); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
@@ -133,7 +135,7 @@ func userLogin(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).SendString("Missing Email or Password")
 	}
 	if user.Email != memberUser.Email || user.Password != memberUser.Password {
-		return c.Status(fiber.StatusBadRequest).SendString("Email or Password is invalided please check again")
+		return c.Status(fiber.StatusUnauthorized).SendString("Email or Password is invalid please check again")
 	}
 	claims := jwt.MapClaims{
 		"email":    user.Email,
@@ -142,13 +144,10 @@ func userLogin(c *fiber.Ctx) error {
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	t, err := token.SignedString([]byte(os.Getenv("JWT_SECRET_KEY")))
+	t, err := token.SignedString([]byte(JWT_TOKEN))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-
-	fmt.Print(os.Getenv("JWT_SECRET_KEY"))
-
 	return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
 		"msg":   "Login successfully",
 		"token": t,
