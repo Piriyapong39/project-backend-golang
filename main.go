@@ -53,7 +53,7 @@ func main() {
 	}))
 
 	app.Get("/ping", greetUser)
-	app.Get("/books", getBooks)
+	app.Get("/books", middlewares.IsAdmin, getBooks)
 	app.Get("/books/:id", getOneBook)
 	app.Post("/books", addBook)
 	app.Patch("/books", updateBook)

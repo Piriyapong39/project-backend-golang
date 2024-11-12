@@ -140,6 +140,7 @@ func userLogin(c *fiber.Ctx) error {
 	claims := jwt.MapClaims{
 		"email":    user.Email,
 		"password": user.Password,
+		"isAdmin":  "admin",
 		"exp":      time.Now().Add(time.Hour * 72).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -152,4 +153,8 @@ func userLogin(c *fiber.Ctx) error {
 		"msg":   "Login successfully",
 		"token": t,
 	})
+}
+
+func isAdmin(c *fiber.Ctx) error {
+	return nil
 }
