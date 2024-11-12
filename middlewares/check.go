@@ -19,9 +19,9 @@ func CheckMiddleware(c *fiber.Ctx) error {
 func IsAdmin(c *fiber.Ctx) error {
 	user := c.Locals("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
-	fmt.Print(claims["isAdmin"])
+	// fmt.Print(claims["isAdmin"])
 	if claims["isAdmin"] != "admin" {
-		return c.Status(fiber.StatusUnauthorized).SendString("You are not admin")
+		return c.Status(fiber.StatusUnauthorized).SendString("You are not allow to use this function")
 	}
 	// isAdmin := claims.i
 	// return c.JSON(fiber.Map{

@@ -154,7 +154,3 @@ func userLogin(c *fiber.Ctx) error {
 		"token": t,
 	})
 }
-
-func isAdmin(c *fiber.Ctx) error {
-	return nil
-}
